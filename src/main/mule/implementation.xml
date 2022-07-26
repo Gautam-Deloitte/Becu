@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+	<flow name="callingFlow" doc:id="1b6096b8-6b9b-4870-954c-67ec3a6477dc" >
+		<http:listener doc:name="Listener" doc:id="3b664c7d-867b-4f80-97a8-5078dbe80bd6" config-ref="HTTP_Listener_config" path="/call"/>
+		<logger level="INFO" doc:name="Logger" doc:id="99db2696-9c3b-4398-b8d8-0151f7eab989" message='#[attributes.queryParams."type"]'/>
+		<set-variable value='#[attributes.queryParams."type"]' doc:name="type" doc:id="40f34fcf-4bb5-4cdc-9e8f-0a9e09942aaf" variableName="type"/>
+		<set-payload value="Main payload" doc:name="mainPayload" doc:id="9a5e6742-29c3-4044-886d-70266aa7b59a" />
+		<choice doc:name="routeFilter" doc:id="40fcc3ac-6493-4996-962e-ccddb7b92531" >
+			<when expression='#[vars."type"=="Asynch"]'>
+				<async doc:name="Async" doc:id="67d5fa54-c88a-4ed5-aa19-3f2f69e3af51">
+					<flow-ref doc:name="Asynchronous" doc:id="6c2c7d8a-5ddc-435d-b21d-a83a3789415e" name="childFlow" />
+		</async>
+			</when>
+			<when expression='#[vars."type"=="Synch"]'>
+				<flow-ref doc:name="Synchronous" doc:id="ec0fc6f0-0da8-4e2a-aa5e-b1bf1b300a3a" name="childFlow" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Unkown way" doc:id="55cc49fc-fd02-483d-9f41-a21ae242c579" message="Wrong"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="39594b8f-8cfb-4c75-8959-e6b092272386" message="End Main flow : #[payload]"/>
+		<choice doc:name="operationFilter" doc:id="6c6991e9-0b2e-46af-9a00-41514a599331" >
+			<when expression='#[payload=="Child payload"]'>
+				<ee:transform doc:name="message" doc:id="b6824331-759e-4847-bc76-a256c043ba59" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"The flow ran Synchronously",
+	"payload":payload
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="text file" doc:id="4a6ac239-ea37-48d9-b14c-d7b7f0b78431" config-ref="File_Config" path="C:\Users\gauppal\Desktop\week3.1\Synch.txt"/>
+			</when>
+			<when expression='#[payload=="Main payload"]'>
+				<ee:transform doc:name="message" doc:id="c093f9b3-2271-46d8-bc79-2befd478427e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+{
+	"message":"The flow ran Asynchronously",
+	"payload":payload
+
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="csv file" doc:id="e2d7e79f-8a1f-4d06-8b85-27b11a62a43b" config-ref="File_Config" path="C:\Users\gauppal\Desktop\week3.1\Asynch.csv"/>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="dd36f597-6af5-410d-83d5-c6814165211c" message="Nothing"/>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="childFlow" doc:id="150a1d85-b94b-4959-81de-c1a1050adece" >
+		<http:listener doc:name="Listener" doc:id="efc2cf1a-3d07-4501-83d4-9225f0e29a44" config-ref="HTTP_Listener_config" path="/child"/>
+		<logger level="INFO" doc:name="Logger" doc:id="439e4664-0a38-4de6-b3ca-611906245e90" message="Child Flow Start"/>
+		<set-variable value="Child variable" doc:name="Child variable" doc:id="3ca0bef5-1409-401e-8a09-5fba490b742c" variableName="Child"/>
+		<set-payload value="Child payload" doc:name="childPayload" doc:id="68c1f567-b5fa-4a49-aa1c-875bdbfcfedd" />
+		<logger level="INFO" doc:name="Logger" doc:id="91f3dbb7-1462-40f3-aebd-a2bf24f724a0" message="End Child Flow"/>
+	</flow>
+</mule>

@@ -43,6 +43,9 @@
 						<workerType>${vCore}</workerType>
 						<workers>${workers}</workers>
 						<objectStoreV2>true</objectStoreV2>
+		   				<goals>   
+						     <goal>package</goal>
+    						</goals>
 					        <properties>
       						 <key>value</key>
    					        </properties>

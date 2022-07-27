@@ -18,7 +18,6 @@
 	</properties>
 
 	<build>
-		<defaultGoal>compile</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -44,9 +43,7 @@
 						<workerType>${vCore}</workerType>
 						<workers>${workers}</workers>
 						<objectStoreV2>true</objectStoreV2>
-		   				<goals>   
-						     <goal>by</goal>
-    						</goals>
+
 					        <properties>
       						 <key>value</key>
    					        </properties>

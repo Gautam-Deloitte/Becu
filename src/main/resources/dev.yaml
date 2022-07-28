@@ -1,9 +1,0 @@
-http:
- path: "/api"
- port: "8081"
- timeout: "30000"
- 
- 
- 
-filepath:
- path: C:\Users\gauppal\Desktop\week3.1

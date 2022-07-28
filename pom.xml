@@ -38,7 +38,7 @@
 						<username>Gautam888</username>
 						<password>Gautam333</password>
 						<environment>Sandbox</environment>
-						<applicationName>mulesoft-cicd-demo</applicationName>
+						<applicationName>mulesoft-cicd-demo-uppal</applicationName>
 						<businessGroup>Hashedin by Deloitte</businessGroup>
 						<workerType>Micro</workerType>
 						<workers>1</workers>

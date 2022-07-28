@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<file:config name="File_Config" doc:name="File Config" doc:id="de3edf9d-ab36-4224-994f-dff1ebf208dc" >
 		<file:connection workingDir="${filepath.path}" />
 	</file:config>
-	<configuration-properties doc:name="Configuration properties" doc:id="0fdc70d0-cef3-4578-bd78-880c2a9bd171" file="${env}.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="0fdc70d0-cef3-4578-bd78-880c2a9bd171" file="dev.yaml" />
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="70ff5eb9-3e82-4112-8457-69f055da4862" basePath="${http.path}" >
 		<http:listener-connection host="0.0.0.0" port="${http.port}" readTimeout="${http.timeout}" />
 	</http:listener-config>
